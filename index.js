@@ -29,19 +29,13 @@ async function run() {
         const nameCollections = client.db("travel").collection("name")
         const countryCollections = client.db("travel").collection("country")
         const japanCollections = client.db("travel").collection("japan")
+        const bookingCollections = client.db("travel").collection("booking")
 
         app.post("/blog", async (req, res) => {
             const newUser = req.body
             const result = await blogCollections.insertOne(newUser)
             res.send(result)
         })
-
-        app.post("/name", async (req, res) => {
-            const newUser = req.body
-            const result = await nameCollections.insertOne(newUser)
-            res.send(result)
-        })
-
 
         app.get("/blog", async (req, res) => {
             const query = {}
@@ -50,6 +44,33 @@ async function run() {
             res.send(result)
 
         })
+
+
+
+        app.delete("/blog/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await blogCollections.deleteOne(query)
+            res.send(result)
+        })
+
+        app.get("/blog/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await blogCollections.findOne(query)
+            res.send(result)
+        })
+
+
+
+
+
+        app.post("/name", async (req, res) => {
+            const newUser = req.body
+            const result = await nameCollections.insertOne(newUser)
+            res.send(result)
+        })
+
 
         app.get("/name", async (req, res) => {
             const query = {}
@@ -74,8 +95,23 @@ async function run() {
             const result = await countryCollections.insertOne(newUser)
             res.send(result)
         })
+        // --------------------------------------------
+        app.post("/booking", async (req, res) => {
+            const newUser = req.body
+            const result = await bookingCollections.insertOne(newUser)
+            res.send(result)
+        })
+
+        app.get("/booking", async (req, res) => {
+            const query = {}
+            const cursor = bookingCollections.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+
+        })
 
 
+        // -----------------------------------------------------
         app.get("/country", async (req, res) => {
             const query = {}
             const cursor = countryCollections.find(query)
@@ -86,33 +122,59 @@ async function run() {
 
         // japan-----------------------------------------------
 
-        app.post("/country/japan", async (req, res) => {
-            const newUser = req.body
-            const result = await japanCollections.insertOne(newUser)
-            res.send(result)
-        })
+        // app.post("/country/:name", async (req, res) => {
+        //     const newUser = req.body
+        //     const result = await japanCollections.insertOne(newUser)
+        //     res.send(result)
+        // })
 
 
         app.get("/country/:name", async (req, res) => {
-            const query = {}
+            const name = req.params.name
+            const query = { name: name }
             const cursor = japanCollections.find(query)
             const result = await cursor.toArray()
             res.send(result)
 
         })
 
-        app.delete("/country/:id", async (req, res) => {
+        app.get("/country/:name/:id", async (req, res) => {
+            const name = req.params.name
             const id = req.params.id
-            const query = { _id: ObjectId(id) }
-            const result = await japanCollections.deleteOne(query)
+            const query = { name: name, _id: ObjectId(id) }
+            const cursor = japanCollections.find(query)
+            const result = await cursor.toArray()
             res.send(result)
+        })
+
+        app.delete("/country/:name/:id", async (req, res) => {
+            const id = req.params.id
+            const name = req.params.name
+            const query = { name: name, _id: ObjectId(id) }
+            const result = await japanCollections.deleteOne(query)
+            // const result = await cursor.toArray()
+            res.send(result)
+        })
+
+
+        app.post("/country/:name", async (req, res) => {
+            const newUser = req.body
+            const result = await japanCollections.insertOne(newUser)
+            res.send(result)
+        })
+
+        app.get("/country/:name/:firstPlaceName", async (req, res) => {
+            const name = req.params.name
+            const firstPlaceName = req.params.firstPlaceName
+            const query = { name: name, firstPlaceName: firstPlaceName }
+            const cursor = await japanCollections.find(query).toArray()
+            res.send(cursor)
         })
 
         app.get("/country/:name/:id", async (req, res) => {
             const id = req.params.id
-            const name = req.params.name
-            // console.log(id, name)
-            const query = { _id: ObjectId(id) }
+            const firstPlaceName = req.params.firstPlaceName
+            const query = { _id: ObjectId(id), firstPlaceName: firstPlaceName }
             const cursor = await japanCollections.find(query).toArray()
             res.send(cursor)
         })
@@ -141,11 +203,43 @@ app.listen(port, () => {
 
 
 
+// app.delete("/country/:id", async (req, res) => {
+//     const id = req.params.id
+//     const query = { _id: ObjectId(id) }
+//     const result = await japanCollections.deleteOne(query)
+//     res.send(result)
+// })
 
 
 
 
 
+// [
+    // {
+    //     "name": "japan",
+    //     "firstimg": "https://img.freepik.com/premium-photo/cherry-blossoms-blooming-spring-spring-background-cherry-blossoms-nature-with-soft-focus_335224-1397.jpg?size=626&ext=jpg&ga=GA1.2.1198299981.1652771125",
+    //     "firstPrice": "4500",
+    //     "firstPlaceName": "Osaka",
+    //     "firstdays": "3"
+    // }
+
+
+    // {
+    //     "name": "japan",
+    //     "firstimg": "https://img.freepik.com/free-photo/autumn-season-mountain-fuji-kawaguchiko-lake-japan_335224-96.jpg?size=626&ext=jpg&ga=GA1.2.1198299981.1652771125",
+    //     "firstPrice": "3500",
+    //     "firstPlaceName": "Tokyo",
+    //     "firstdays": "5"
+    // }
+
+    // {
+    //     "name": "japan",
+    //     "firstimg": "https://img.freepik.com/free-photo/cherry-blossoms-fuji-mountain-spring-sunrise-shizuoka-japan_335224-110.jpg?size=626&ext=jpg&ga=GA1.2.1198299981.1652771125",
+    //     "firstPrice": "9500",
+    //     "firstPlaceName": "MountFuji",
+    //     "firstdays": "10"
+    // }
+// ]
 
 
 
