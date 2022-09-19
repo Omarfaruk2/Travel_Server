@@ -30,6 +30,7 @@ async function run() {
         const countryCollections = client.db("travel").collection("country")
         const japanCollections = client.db("travel").collection("japan")
         const bookingCollections = client.db("travel").collection("booking")
+        const hotelCollections = client.db("travel").collection("hotel")
 
         app.post("/blog", async (req, res) => {
             const newUser = req.body
@@ -96,6 +97,7 @@ async function run() {
             res.send(result)
         })
         // --------------------------------------------
+
         app.post("/booking", async (req, res) => {
             const newUser = req.body
             const result = await bookingCollections.insertOne(newUser)
@@ -178,6 +180,36 @@ async function run() {
             const cursor = await japanCollections.find(query).toArray()
             res.send(cursor)
         })
+
+        // hotel--------------------------------------------------------------------
+
+
+        app.post("/hotel", async (req, res) => {
+            const newUser = req.body
+            const result = await hotelCollections.insertOne(newUser)
+            res.send(result)
+        })
+
+        app.get("/hotel", async (req, res) => {
+            const query = {}
+            const cursor = hotelCollections.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+
+        })
+        app.get("/hotel/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const cursor = hotelCollections.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+
+        })
+
+
+
+
+
 
 
 
