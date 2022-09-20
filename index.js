@@ -31,6 +31,10 @@ async function run() {
         const japanCollections = client.db("travel").collection("japan")
         const bookingCollections = client.db("travel").collection("booking")
         const hotelCollections = client.db("travel").collection("hotel")
+        const bookingHotelCollections = client.db("travel").collection("bookingHotel")
+        const shopCollections = client.db("travel").collection("shop")
+        const orderCollections = client.db("travel").collection("order")
+        const countryFlightbookingCollections = client.db("travel").collection("countryFlightbooking")
 
         app.post("/blog", async (req, res) => {
             const newUser = req.body
@@ -195,8 +199,8 @@ async function run() {
             const cursor = hotelCollections.find(query)
             const result = await cursor.toArray()
             res.send(result)
-
         })
+
         app.get("/hotel/:id", async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
@@ -205,8 +209,123 @@ async function run() {
             res.send(result)
 
         })
+        // shop------------------------------------------------------------------------------------------
+
+        app.post("/shop", async (req, res) => {
+            const newUser = req.body
+            const result = await shopCollections.insertOne(newUser)
+            res.send(result)
+        })
+
+        app.get("/shop", async (req, res) => {
+            const query = {}
+            const cursor = shopCollections.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.get("/shop/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const cursor = shopCollections.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+
+        })
+
+        app.delete("/shop/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await shopCollections.deleteOne(query)
+            res.send(result)
+        })
+        // --------------------------------------------------------------------------------------------
+
+        app.post("/order", async (req, res) => {
+            const newOrder = req.body
+            const result = await orderCollections.insertOne(newOrder)
+            res.send(result)
+        })
 
 
+        app.get("/order", async (req, res) => {
+            const query = {}
+            const cursor = orderCollections.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.delete("/order/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await orderCollections.deleteOne(query)
+            res.send(result)
+        })
+
+
+        app.get("/myorder", async (req, res) => {
+            const email = req.query.email
+            const query = { email: email }
+            const result = await orderCollections.find(query).toArray()
+            return res.send(result)
+        })
+
+        // booking hotel----------------------------------------------------------------------------------------------------
+
+        app.post("/bookingHotel", async (req, res) => {
+            const newOrder = req.body
+            const result = await bookingHotelCollections.insertOne(newOrder)
+            res.send(result)
+        })
+
+
+        app.get("/mybookiinghotel", async (req, res) => {
+            const email = req.query.email
+            const query = { email: email }
+            const result = await bookingHotelCollections.find(query).toArray()
+            return res.send(result)
+        })
+
+
+
+        // get all boking
+        app.get("/bookingHotel", async (req, res) => {
+            const query = {}
+            const cursor = bookingHotelCollections.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.delete("/bookingHotel/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await bookingHotelCollections.deleteOne(query)
+            res.send(result)
+        })
+
+        // country booking-----------------------------------------------------------------------------------------------------------------
+
+        // for all
+        app.post("/countryFlightbooking", async (req, res) => {
+            const newOrder = req.body
+            const result = await countryFlightbookingCollections.insertOne(newOrder)
+            res.send(result)
+        })
+
+        // for all
+        app.get("/countryFlightbooking", async (req, res) => {
+            const query = {}
+            const cursor = countryFlightbookingCollections.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.get("/myordercountryFlightbooking", async (req, res) => {
+            const email = req.query.email
+            const query = { email: email }
+            const result = await countryFlightbookingCollections.find(query).toArray()
+            return res.send(result)
+        })
 
 
 
