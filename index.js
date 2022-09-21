@@ -35,6 +35,7 @@ async function run() {
         const shopCollections = client.db("travel").collection("shop")
         const orderCollections = client.db("travel").collection("order")
         const countryFlightbookingCollections = client.db("travel").collection("countryFlightbooking")
+        const updateUserCollection = client.db("travel").collection("updateuser")
 
         app.post("/blog", async (req, res) => {
             const newUser = req.body
@@ -327,7 +328,38 @@ async function run() {
             return res.send(result)
         })
 
+        app.delete("/countryFlightbooking/:id", async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await countryFlightbookingCollections.deleteOne(query)
+            res.send(result)
+        })
 
+
+        // ------------------------------------------------------------------------------------------------------------------
+
+        // all user and xoss
+        app.put("/updateuser/:email", async (req, res) => {
+            const email = req.params.email
+            const user = req.body
+            const filter = { email: email }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: user
+            }
+            const result = await updateUserCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+
+        })
+
+        // My items
+        app.get('/updateuser/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const cursor = await updateUserCollection.find(query).toArray()
+            res.send(cursor)
+
+        })
 
 
 
@@ -348,54 +380,6 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
     console.log("Listening to port", port)
 })
-
-
-
-
-
-
-// app.delete("/country/:id", async (req, res) => {
-//     const id = req.params.id
-//     const query = { _id: ObjectId(id) }
-//     const result = await japanCollections.deleteOne(query)
-//     res.send(result)
-// })
-
-
-
-
-
-// [
-    // {
-    //     "name": "japan",
-    //     "firstimg": "https://img.freepik.com/premium-photo/cherry-blossoms-blooming-spring-spring-background-cherry-blossoms-nature-with-soft-focus_335224-1397.jpg?size=626&ext=jpg&ga=GA1.2.1198299981.1652771125",
-    //     "firstPrice": "4500",
-    //     "firstPlaceName": "Osaka",
-    //     "firstdays": "3"
-    // }
-
-
-    // {
-    //     "name": "japan",
-    //     "firstimg": "https://img.freepik.com/free-photo/autumn-season-mountain-fuji-kawaguchiko-lake-japan_335224-96.jpg?size=626&ext=jpg&ga=GA1.2.1198299981.1652771125",
-    //     "firstPrice": "3500",
-    //     "firstPlaceName": "Tokyo",
-    //     "firstdays": "5"
-    // }
-
-    // {
-    //     "name": "japan",
-    //     "firstimg": "https://img.freepik.com/free-photo/cherry-blossoms-fuji-mountain-spring-sunrise-shizuoka-japan_335224-110.jpg?size=626&ext=jpg&ga=GA1.2.1198299981.1652771125",
-    //     "firstPrice": "9500",
-    //     "firstPlaceName": "MountFuji",
-    //     "firstdays": "10"
-    // }
-// ]
-
-
-
-
-
 
 
 
