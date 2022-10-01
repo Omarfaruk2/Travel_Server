@@ -164,11 +164,14 @@ async function run() {
         })
 
 
+
         app.post("/country/:name", async (req, res) => {
             const newUser = req.body
             const result = await japanCollections.insertOne(newUser)
             res.send(result)
         })
+
+
 
         app.get("/country/:name/:firstPlaceName", async (req, res) => {
             const name = req.params.name
@@ -359,6 +362,13 @@ async function run() {
             const cursor = await updateUserCollection.find(query).toArray()
             res.send(cursor)
 
+        })
+
+        // My items
+        app.get('/updateuser', async (req, res) => {
+            const query = {}
+            const cursor = await updateUserCollection.find(query).toArray()
+            res.send(cursor)
         })
 
 
